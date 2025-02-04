@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - AuthenticationFilter # Corrected spelling from "AuthenticatinFilter" to "AuthenticationFilter"
+
+        - id: identity-service  # Fixed ID indentation and corrected spelling (Identity-Service → identity-service)
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/user/**  # Changed from `/api/product/**` to avoid conflict
+#          filters:
+#            - AuthenticationFilter # Corrected filter name
+
+  
+
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "GET, POST, PUT, DELETE"
+            allowedHeaders: "Authorization, Content-Type, X-Requested-With"
+            maxAge: 3600
+
+logging:
+  level:
+    root: INFO
+    org.springframework:
+      cloud:
+        gateway:
+          route:
+            RouteDefinitionLocator: INFO
+          gateway: TRACE
